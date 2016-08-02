@@ -295,13 +295,29 @@ int main(void)
 	/* Toggle pin 18 as fast as possible. */
 	/* OUT_GPIO(18); */
 
+	/* Block for user input so the PWM can be measured with an oscilloscope. */
+	getchar();
+
+	/* Disable PWM. */
+	/* *(pwm + PWM0_DATA) */
+	/* 	= *(pwm + PWM1_DATA) */
+	/* 	= *(pwm + PWM_CONTROL) = 0; */
+	/* INP_GPIO(18); */
+
+	for (;;) {
+		SET_GPIO_ALT(18, 5); /* ALT5 makes pin 18 do PWM0. */
+		usleep(5e5);
+		INP_GPIO(18);
+		usleep(5e5);
+	}
+
 	if (gettimeofday(&tv_a, NULL) == -1)
 		goto exit;
 
 	/* <codeandlife.com> RPi C GPIO benchmark says f = 22MHz. */
 	for (size_t i = 0; i < 22e6; i++) {
-		GPIO_SET = 1<<16;
-		GPIO_CLR = 1<<16;
+		GPIO_SET = 1<<18;
+		GPIO_CLR = 1<<18;
 	}
 
 	if (gettimeofday(&tv_b, NULL) == -1)
